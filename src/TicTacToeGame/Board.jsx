@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from "react"; 
 import Square from "./Square";
 import '../Board.css'; // Separate CSS file for board-specific styles
 
@@ -7,7 +7,7 @@ const Board = () => {
   const [isXTurn, setIsXTurn] = useState(true);
 
   const handleClick = (index) => {
-    if (state[index] !== null || checkWinner()) return;
+    if (state[index] !== null || checkWinner() || isDraw()) return;
 
     const copyState = [...state];
     copyState[index] = isXTurn ? "X" : "O";
@@ -34,7 +34,13 @@ const Board = () => {
     return false;
   };
 
+  const isDraw = () => {
+    // A draw happens when all squares are filled and there is no winner
+    return state.every(square => square !== null) && !checkWinner();
+  };
+
   const isWinner = checkWinner();
+  const draw = isDraw();
 
   const handleReset = () => {
     setState(Array(9).fill(null));
@@ -43,7 +49,9 @@ const Board = () => {
 
   return (
     <div className="board-wrapper">
-      <h3>{isWinner ? `${isWinner} won the game!` : `Next Turn: ${isXTurn ? 'X' : 'O'}`}</h3>
+      <h3>
+        {isWinner ? `${isWinner} won the game!` : draw ? "It's a draw!" : `Next Turn: ${isXTurn ? 'X' : 'O'}`}
+      </h3>
       <div className="board-container">
         {[0, 1, 2].map((row) => (
           <div className="board-row" key={row}>
@@ -58,7 +66,7 @@ const Board = () => {
         ))}
       </div>
       <button className="reset-button" onClick={handleReset}>
-        {isWinner ? "Play Again" : "Reset"}
+        {isWinner || draw ? "Play Again" : "Reset"}
       </button>
     </div>
   );
